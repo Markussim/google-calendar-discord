@@ -84,8 +84,12 @@ function listEvents(auth) {
         if (events.length) {
             console.log('Upcoming 10 events:');
             events.map((event, i) => {
-                const start = event.start.dateTime || event.start.date;
-                console.log( /*`${start} - */ `${event.summary}`);
+
+                let startDate = new Date(event.start.dateTime || event.start.date);
+
+                let endDate = new Date(event.end.dateTime)
+
+                console.log(`${startDate.getHours()}:${startDate.getMinutes()} - ${endDate.getHours()}:${endDate.getMinutes()} ${event.summary}`);
             });
         } else {
             console.log('No upcoming events found.');
