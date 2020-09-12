@@ -22,7 +22,7 @@ const TOKEN_PATH = 'token.json';
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback, res) {
+function authorize(credentials, callback, msg) {
     const { client_secret, client_id, redirect_uris } = credentials.installed;
     const oAuth2Client = new google.auth.OAuth2(
         client_id, client_secret, redirect_uris[0]);
@@ -31,7 +31,7 @@ function authorize(credentials, callback, res) {
     fs.readFile(TOKEN_PATH, (err, token) => {
         if (err) return getAccessToken(oAuth2Client, callback);
         oAuth2Client.setCredentials(JSON.parse(token));
-        callback(oAuth2Client, res);
+        callback(oAuth2Client, msg);
     });
 }
 
@@ -70,12 +70,12 @@ function getAccessToken(oAuth2Client, callback) {
  * Lists the next 10 events on the user's primary calendar.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function listEvents(auth, ress) {
+function listEvents(auth, msg) {
     const calendar = google.calendar({ version: 'v3', auth });
     calendar.events.list({
-        calendarId: 'gk3gv9ulvffjpnf312jr7flhrc@group.calendar.google.com',
+        calendarId: 'l42rpife7v2pdnqmuounf6jgj0@group.calendar.google.com',
         timeMin: (new Date()).toISOString(),
-        maxResults: 100,
+        maxResults: 10,
         singleEvents: true,
         orderBy: 'startTime',
     }, (err, res) => {
@@ -83,19 +83,23 @@ function listEvents(auth, ress) {
         const events = res.data.items;
         if (events.length) {
             console.log('Upcoming 10 events:');
-            events.map((event, i) => {
 
-                let startDate = new Date(event.start.dateTime || event.start.date);
+            let startDate = new Date(events[0].start.dateTime || events[0].start.date);
 
-                let endDate = new Date(event.end.dateTime)
+            let endDate = new Date(events[0].end.dateTime)
 
-                ress.write(`${startDate.getHours()}:${startDate.getMinutes()} - ${endDate.getHours()}:${endDate.getMinutes()} ${event.summary}`);
-            });
+            let startUnix = (startDate.valueOf())
+
+            let currentUnix = Date.now().valueOf()
+
+            if (startUnix < currentUnix) {
+                msg.reply("Jag kan inte svara just nu, jag har aktiviteten : " + events[0].summary)
+            }
+
+            //msg.reply(`${startDate.getHours()}:${startDate.getMinutes()} - ${endDate.getHours()}:${endDate.getMinutes()} ${event.summary}`);
         } else {
             console.log('No upcoming events found.');
         }
-
-        ress.end()
     });
 }
 
