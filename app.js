@@ -10,11 +10,11 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
 const TOKEN_PATH = 'token.json';
 
 // Load client secrets from a local file.
-fs.readFile('credentials.json', (err, content) => {
+/*fs.readFile('credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Calendar API.
     authorize(JSON.parse(content), listEvents);
-});
+});*/
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -22,7 +22,7 @@ fs.readFile('credentials.json', (err, content) => {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback) {
+function authorize(credentials, callback, res) {
     const { client_secret, client_id, redirect_uris } = credentials.installed;
     const oAuth2Client = new google.auth.OAuth2(
         client_id, client_secret, redirect_uris[0]);
@@ -31,7 +31,7 @@ function authorize(credentials, callback) {
     fs.readFile(TOKEN_PATH, (err, token) => {
         if (err) return getAccessToken(oAuth2Client, callback);
         oAuth2Client.setCredentials(JSON.parse(token));
-        callback(oAuth2Client);
+        callback(oAuth2Client, res);
     });
 }
 
@@ -70,12 +70,12 @@ function getAccessToken(oAuth2Client, callback) {
  * Lists the next 10 events on the user's primary calendar.
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function listEvents(auth) {
+function listEvents(auth, ress) {
     const calendar = google.calendar({ version: 'v3', auth });
     calendar.events.list({
         calendarId: 'gk3gv9ulvffjpnf312jr7flhrc@group.calendar.google.com',
         timeMin: (new Date()).toISOString(),
-        maxResults: 10,
+        maxResults: 100,
         singleEvents: true,
         orderBy: 'startTime',
     }, (err, res) => {
@@ -89,10 +89,14 @@ function listEvents(auth) {
 
                 let endDate = new Date(event.end.dateTime)
 
-                console.log(`${startDate.getHours()}:${startDate.getMinutes()} - ${endDate.getHours()}:${endDate.getMinutes()} ${event.summary}`);
+                ress.write(`${startDate.getHours()}:${startDate.getMinutes()} - ${endDate.getHours()}:${endDate.getMinutes()} ${event.summary}`);
             });
         } else {
             console.log('No upcoming events found.');
         }
+
+        ress.end()
     });
 }
+
+module.exports = { authorize, listEvents }
