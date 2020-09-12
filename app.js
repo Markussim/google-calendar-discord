@@ -73,7 +73,7 @@ function getAccessToken(oAuth2Client, callback) {
 function listEvents(auth, msg) {
     const calendar = google.calendar({ version: 'v3', auth });
     calendar.events.list({
-        calendarId: 'l42rpife7v2pdnqmuounf6jgj0@group.calendar.google.com',
+        calendarId: 'kk1uh88c0l35ar2hf5vt949bvk@group.calendar.google.com',
         timeMin: (new Date()).toISOString(),
         maxResults: 10,
         singleEvents: true,
