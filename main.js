@@ -12,21 +12,26 @@ client.on('ready', () => {
 client.on('message', msg => {
     if (msg.author.bot) return;
 
-    if (Object.keys(msg.mentions.users.toJSON()).length === 0) {
-        console.log("No mentions")
-    } else {
-        console.log(msg.mentions.users.toJSON()[0].id)
-    }
-    if (msg.mentions.users.toJSON()[0].id == 292403753360031745) {
-        //msg.reply('pong');
+    try {
+        if (Object.keys(msg.mentions.users.toJSON()).length === 0) {
+            console.log("No mentions")
+        } else {
+            console.log(msg.mentions.users.toJSON()[0].id)
+            if (msg.mentions.users.toJSON()[0].id == 292403753360031745) {
+                //msg.reply('pong');
 
-        //msg.reply(msg.content)
+                //msg.reply(msg.content)
 
-        fs.readFile('credentials.json', (err, content) => {
-            if (err) return console.log('Error loading client secret file:', err);
-            // Authorize a client with credentials, then call the Google Calendar API.
-            other.authorize(JSON.parse(content), other.listEvents, msg);
-        });
+                fs.readFile('credentials.json', (err, content) => {
+                    if (err) return console.log('Error loading client secret file:', err);
+                    // Authorize a client with credentials, then call the Google Calendar API.
+                    other.authorize(JSON.parse(content), other.listEvents, msg);
+                });
+            }
+        }
+
+    } catch {
+        msg.reply("Något blev fel. Försök igen");
     }
 });
 

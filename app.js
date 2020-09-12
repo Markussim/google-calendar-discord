@@ -93,7 +93,7 @@ function listEvents(auth, msg) {
             let currentUnix = Date.now().valueOf()
 
             if (startUnix < currentUnix) {
-                msg.reply("Jag kan inte svara just nu, jag har aktiviteten : " + events[0].summary)
+                msg.reply("Jag kan inte svara just nu, jag har aktiviteten : \"" + events[0].summary + "\". Den slutar " + endDate.getHours() + ":" + endDate.getMinutes())
             }
 
             //msg.reply(`${startDate.getHours()}:${startDate.getMinutes()} - ${endDate.getHours()}:${endDate.getMinutes()} ${event.summary}`);
