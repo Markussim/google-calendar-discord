@@ -75,8 +75,7 @@ function listEvents(auth, msg) {
     calendar.events.list({
         calendarId: 'kk1uh88c0l35ar2hf5vt949bvk@group.calendar.google.com',
         timeMin: (new Date()).toISOString(),
-        timeZone: 'Europe/Stockholm',
-        maxResults: 1,
+        maxResults: 10,
         singleEvents: true,
         orderBy: 'startTime',
     }, (err, res) => {
