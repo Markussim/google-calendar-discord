@@ -17,7 +17,7 @@ client.on('message', msg => {
             console.log("No mentions")
         } else {
             console.log(msg.mentions.users.toJSON()[0].id)
-            if (msg.mentions.users.toJSON()[0].id == 292403753360031745) {
+            if (msg.mentions.users.toJSON()[0].id == 292403753360031745 && !msg.mentions.users.toJSON()[0].presence.status == "online") {
                 //msg.reply('pong');
 
                 //msg.reply(msg.content)
